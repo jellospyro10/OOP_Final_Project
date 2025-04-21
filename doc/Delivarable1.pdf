@@ -1,0 +1,135 @@
+Car Group Event Manager — Project Idea Submission (Deliverable 1)
+1. Scenario
+Car enthusiasts want a simple command‑line tool to organize and participate in group car events (meets, shows, rallies). Organizers create events with date/time/location/capacity, members register their cars, and the system persists data across sessions.
+
+2. Design Paradigm & Functionalities
+Class Hierarchy & OOP: Abstract classes, inheritance, interfaces.
+
+Event Management: CRUD operations for events.
+
+Participant Registration: Manage members and their car collections.
+
+Notifications: In‑app queuing and delivery via Notifiable interface.
+
+Persistence: Text I/O (CSV) for events and members.
+
+Sorting & Filtering: Streams with lambdas; custom Comparable/Comparator.
+
+Exception Handling: Input validation and file errors.
+
+TDD & Git: JUnit tests and Git version control.
+
+3. Expected Output & User Actions
+List Events: Display upcoming events sorted by date.
+
+Create Event: Prompt for details, confirm creation.
+
+Register Member: Enter personal info and car details.
+
+View Participants: For a given event.
+
+Persist & Load: Auto‑save on exit; load on startup.
+
+4. Class Hierarchies (≥2)
+User Hierarchy
+
+sql
+Copy
+Edit
+Person
+├─ Organizer
+└─ Member
+Event Hierarchy
+
+vbnet
+Copy
+Edit
+Event
+├─ CarMeetEvent
+└─ CarShowEvent
+5. Interface & Justification
+Notifiable
+
+Method: void notify(String message)
+
+Implemented by Organizer to deliver event updates.
+
+Decouples notification logic from domain classes.
+
+6. Runtime Polymorphism
+Method Overriding: displayDetails() in CarMeetEvent and CarShowEvent.
+
+Method Overloading: addParticipant(Member m) vs. addParticipant(String memberId) in Event.
+
+7. Text I/O Usage
+Repository Class
+
+Methods: loadEvents(Path), saveEvents(Path), loadMembers(Path), saveMembers(Path).
+
+Purpose: Read/write CSV files for persistence.
+
+8. Comparable & Comparator
+Comparable: Event implements Comparable<Event> (compare by LocalDateTime).
+
+Comparator: MemberNameComparator implements Comparator<Member> (compare by name).
+
+9. Class Diagram
+mermaid
+Copy
+Edit
+classDiagram
+    class Person {
+      +String name
+      +String email
+      +displayInfo()
+    }
+    Person <|-- Organizer
+    Person <|-- Member
+
+    interface Notifiable {
+      +notify(String message)
+    }
+    Organizer ..|> Notifiable
+
+    class Car {
+      +String make
+      +String model
+      +int year
+    }
+    Member "1" o-- "*" Car : owns
+
+    class Event {
+      +LocalDateTime dateTime
+      +String location
+      +displayDetails()
+      +addParticipant(...)
+    }
+    Event <|-- CarMeetEvent
+    Event <|-- CarShowEvent
+    Event "1" o-- "*" Member : attendees
+
+    class MemberNameComparator {
+      +compare(Member, Member)
+    }
+    MemberNameComparator ..> Member
+
+    class Repository {
+      +loadEvents(Path)
+      +saveEvents(Path)
+      +loadMembers(Path)
+      +saveMembers(Path)
+    }
+10. Deliverable 2 Scope (50%)
+Implement the core domain & persistence:
+
+Classes: Person, Organizer, Member, Car, Event, CarMeetEvent, CarShowEvent
+
+Interface: Notifiable
+
+Methods: Constructors, getters, displayDetails(), addParticipant(...)
+
+Persistence: Repository.load* & save* methods
+
+Comparisons: Event.compareTo, MemberNameComparator.compare
+
+TDD: JUnit tests for all above.
